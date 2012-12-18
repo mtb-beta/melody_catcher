@@ -11,12 +11,13 @@ from PyQt4 import QtGui,QtCore
 from ControlWidget import*
 
 class ControlPanel(QtGui.QGroupBox):
-  def __init__(self,title,control_width,control_height,parent= None):
+  def __init__(self,title,width,height,parent= None):
     super(ControlPanel,self).__init__(title,parent)
     #print title
-    self.control_widget = ControlWidget(control_width,control_height)
+    self.control_widget = ControlWidget(width,height)
     self.layout = QtGui.QHBoxLayout()
     self.layout.addWidget(self.control_widget)
     self.setLayout(self.layout)
+    self.setFixedSize(width,height)
 
 

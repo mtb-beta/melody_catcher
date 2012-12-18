@@ -27,8 +27,8 @@ class ControlWidget(QtGui.QWidget):
     self.setupUi(main_window)
     self.timeLcd.display("00:00:00")
 
-  def set_wave_widget(self,wave_widget):
-    self.wave_widget = wave_widget
+  def set_wave_panel(self,wave_panel):
+    self.wave_widget = wave_panel.wave_widget
 
 
   def setupUi(self,main_window):
@@ -78,6 +78,7 @@ class ControlWidget(QtGui.QWidget):
     mainLayout.addLayout(playbackLayout)
 
     self.setLayout(mainLayout)
+    self.setFixedSize(self.width,self.height)
 
   def tableClicked(self,row,column):
     wasPlaying = (self.mediaObject.state() == Phonon.PlayingState)

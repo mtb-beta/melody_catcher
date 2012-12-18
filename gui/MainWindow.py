@@ -9,7 +9,7 @@ Note:メインウィンドウを制御するクラス
 from PyQt4 import QtCore,QtGui
 from wav.MusicObject import*
 from gui.MidiViewWidget import*
-from gui.WaveWidget import*
+from gui.WavePanel import*
 from gui.ControlPanel import*
 
 
@@ -20,7 +20,7 @@ class MainWindow(QtGui.QMainWindow):
     self.display_width = display_width
     self.display_height = display_height
     self.control_width = display_width
-    self.control_height = 100
+    self.control_height = 200
     self.wave_width = display_width
     self.wave_height = display_height - self.control_height -480
     self.midi_width = display_width
@@ -30,21 +30,21 @@ class MainWindow(QtGui.QMainWindow):
   def setup(self):
     self.control_panel  = ControlPanel('Control',self.control_width,self.control_height)
     #self.control_widget  = ControlWidget(self.control_width,self.control_height)
-    self.wave_widget = WaveWidget(self.wave_width,self.wave_height)
+    self.wave_panel = WavePanel('Music Wave',self.wave_width,self.wave_height)
     self.midi_view_widget = MidiViewWidget(self.midi_width,self.midi_height)
-    self.control_panel.control_widget.set_wave_widget(self.wave_widget)
+    self.control_panel.control_widget.set_wave_panel(self.wave_panel)
 
     # 縦に並ぶレイアウト
     self.MainLayout = QtGui.QVBoxLayout()
 
     self.MainLayout.addWidget(self.control_panel.control_widget)
-    self.MainLayout.addWidget(self.wave_widget)
+    self.MainLayout.addWidget(self.wave_panel.wave_widget)
     self.MainLayout.addWidget(self.midi_view_widget)
 
     self.Panel = QtGui.QWidget()
     self.Panel.setLayout(self.MainLayout)
 
-    self.Panel.setFixedSize(self.display_width,self.display_height)
+    #self.Panel.setFixedSize(self.display_width,self.display_height)
 
     self.setWindowTitle("melody")
     self.setCentralWidget(self.Panel)
@@ -116,10 +116,10 @@ class MainWindow(QtGui.QMainWindow):
     index = len(self.control_panel.control_widget.sources)
 
     for string in files:
-      self.control_panel.control_panel.control_widget.sources.append(Phonon.MediaSource(string))
+      self.control_panel.control_widget.sources.append(Phonon.MediaSource(string))
 
     if self.control_panel.control_widget.sources:
       self.control_panel.control_widget.metaInformationResolver.setCurrentSource(self.control_panel.control_widget.sources[index])
-      self.wave_widget.source.append(MusicObject(self.control_panel.control_widget.metaInformationResolver.currentSource().fileName()))
-      self.wave_widget.draw_wave(index)
+      self.wave_panel.wave_widget.source.append(MusicObject(self.control_panel.control_widget.metaInformationResolver.currentSource().fileName()))
+      self.wave_panel.wave_widget.draw_wave(index)
 

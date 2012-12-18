@@ -29,6 +29,10 @@ class Slider(QtGui.QGroupBox):
     print 'event:'+str(event)
     print type(event)
 
+  def initValue(self):
+    self.setMinimum(0)
+    self.setMaximum(1)
+
   def setMinimum(self,value):
     self.scrollBar.setMinimum(value)
 
