@@ -20,7 +20,7 @@ class MainWindow(QtGui.QMainWindow):
     self.display_width = display_width
     self.display_height = display_height
     self.control_width = display_width
-    self.control_height = 200
+    self.control_height = 100
     self.wave_width = display_width
     self.wave_height = display_height - self.control_height -480
     self.midi_width = display_width
@@ -37,8 +37,8 @@ class MainWindow(QtGui.QMainWindow):
     # 縦に並ぶレイアウト
     self.MainLayout = QtGui.QVBoxLayout()
 
-    self.MainLayout.addWidget(self.control_panel.control_widget)
-    self.MainLayout.addWidget(self.wave_panel.wave_widget)
+    self.MainLayout.addWidget(self.control_panel)
+    self.MainLayout.addWidget(self.wave_panel)
     self.MainLayout.addWidget(self.midi_view_widget)
 
     self.Panel = QtGui.QWidget()

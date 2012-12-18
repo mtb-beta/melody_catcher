@@ -18,6 +18,7 @@ class WaveWidget(QtGui.QWidget):
     self.width_size = 4
     self.wave_palette = 0
 
+
   def draw_frame(self):
     self.back_ground_color = QtGui.QColor.fromCmykF(0.40,0.4,0.1,0.6)
     self.offscreen.fill(self.back_ground_color)
@@ -34,7 +35,7 @@ class WaveWidget(QtGui.QWidget):
 
     painter.end()
 
-  def draw_wave(self,index):
+  def draw_wave(self,index,time):
     print 'draw_wave1'
     self.index = index
     #c:self.draw_frame()
@@ -45,6 +46,7 @@ class WaveWidget(QtGui.QWidget):
     old_x = 0
     old_y = 0
     index = int(index)
+    
     frames = int(self.source[index].nframes/self.width)
     for i in range(self.width):
       new_x = i
@@ -96,6 +98,15 @@ class WaveWidget(QtGui.QWidget):
 
   def mouseMoveEvent(self,event):
     self.reverse(event.x())
+
+  """
+  def wheelEvent(self,event):
+    print 'Painter,wheelEvent'
+    print event.delta()
+    print event.orientation()
+    print '--'
+  """
+
 
   def setup(self):
     self.setFixedSize(self.width,self.height)

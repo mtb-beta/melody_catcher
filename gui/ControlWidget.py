@@ -62,19 +62,22 @@ class ControlWidget(QtGui.QWidget):
     self.musicTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
     self.musicTable.cellPressed.connect(self.tableClicked)
 
+    """
     seekerLayout = QtGui.QHBoxLayout()
     seekerLayout.addWidget(self.seekSlider)
+    """
 
     playbackLayout = QtGui.QHBoxLayout()
     playbackLayout.addWidget(bar)
     playbackLayout.addStretch()
+    playbackLayout.addWidget(self.seekSlider)
     playbackLayout.addWidget(volumeLabel)
     playbackLayout.addWidget(self.volumeSlider)
     playbackLayout.addWidget(self.timeLcd)
 
     mainLayout = QtGui.QVBoxLayout()
-    mainLayout.addWidget(self.musicTable)
-    mainLayout.addLayout(seekerLayout)
+    #mainLayout.addWidget(self.musicTable)
+    #mainLayout.addLayout(seekerLayout)
     mainLayout.addLayout(playbackLayout)
 
     self.setLayout(mainLayout)

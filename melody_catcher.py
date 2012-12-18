@@ -15,7 +15,7 @@ import os
 from gui.MainWindow import*
 
 
-display_width = 1440
+display_width = 1400
 display_height =850
 
 

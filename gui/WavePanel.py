@@ -15,15 +15,19 @@ class WavePanel(QtGui.QGroupBox):
   def __init__(self,title,width,height,parent=None):
     print parent
     print '--'
+    width = width
+    height = height - 50
     super(WavePanel,self).__init__(title,parent)
-    self.wave_widget = WaveWidget(width,height)
+    self.wave_widget = WaveWidget(width-10,height-50)
     self.slider = self.initSlider()
-    self.layout= QtGui.QHBoxLayout()
+    self.layout= QtGui.QVBoxLayout()
     self.layout.addWidget(self.wave_widget)
-    self.layout.addWidget(self.slider)
+    self.layout.addWidget(self.slider.scrollBar)
     self.setLayout(self.layout)
-    self.setFixedSize(width,height+400)
+    self.setFixedSize(width,height)
 
+  def wheelEvent(self,event):
+    self.slider.moveWheel(event.delta())
   def initSlider(self):
     widget = Slider(QtCore.Qt.Horizontal,'time')
     widget.initValue()
