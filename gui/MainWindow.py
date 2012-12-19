@@ -56,6 +56,8 @@ class MainWindow(QtGui.QMainWindow):
     fileMenu = self.menuBar().addMenu("&File")
 
     fileMenu.addAction(self.addFilesAction)
+    fileMenu.addAction(self.wave_expansionAction)
+
     fileMenu.addSeparator()
     fileMenu.addAction(self.exitAction)
 
@@ -99,6 +101,11 @@ class MainWindow(QtGui.QMainWindow):
     self.aboutQtAction = QtGui.QAction("About &Qt", self,
         shortcut="Ctrl+Q", triggered=QtGui.qApp.aboutQt)
 
+    self.wave_expansionAction = QtGui.QAction("Wave &Expansion",self,
+        shortcut='Ctrl+O',triggered=self.wave_panel.wave_widget.expansion)
+
+    self.wave_cuttailAction = QtGui.QAction("Wave &Cuttail",self,
+        shortcut='Ctrl+I',triggered=self.wave_panel.wave_widget.cuttail)
 
   def about(self):
     QtGui.QMessageBox.information(self,"About Melody Catcher",
@@ -121,5 +128,6 @@ class MainWindow(QtGui.QMainWindow):
     if self.control_panel.control_widget.sources:
       self.control_panel.control_widget.metaInformationResolver.setCurrentSource(self.control_panel.control_widget.sources[index])
       self.wave_panel.wave_widget.source.append(MusicObject(self.control_panel.control_widget.metaInformationResolver.currentSource().fileName()))
-      self.wave_panel.wave_widget.draw_wave(index)
+      self.wave_panel.file_init(index)
+      #self.wave_panel.wave_widget.draw_wave(index,0)
 

@@ -15,12 +15,33 @@ class WaveWidget(QtGui.QWidget):
     self.height = wave_height-20
     self.setup()
     self.source = []
-    self.width_size = 4
     self.wave_palette = 0
+    self.sample_rate = 44100.0
+    self.time_bar = CurrentTimeBar()
 
+  def set_parameter(self,view_times):
+    self.view_times = view_times
+    self.width_size = view_times/2
+    self.frames = self.view_times*self.sample_rate / self.width
+  def init_current_times(self):
+    self.current_times = 0
+
+  def expansion(self):
+    if self.view_times*2 < 50:
+      self.view_times = self.view_times*2
+      self.width_size =self.view_times/2
+      self.frames = self.view_times*self.sample_rate / self.width
+    self.draw_wave(self.index)
+
+  def cuttail(self):
+    if self.view_times/2 >5:
+      self.view_times = self.view_times/2
+      self.width_size =self.view_times/2
+      self.frames = self.view_times*self.sample_rate / self.width
+    self.draw_wave(self.index)
 
   def draw_frame(self):
-    self.back_ground_color = QtGui.QColor.fromCmykF(0.40,0.4,0.1,0.6)
+    self.back_ground_color = QtGui.QColor.fromCmykF(0.3,0.2,0.2,0.1)
     self.offscreen.fill(self.back_ground_color)
 
     painter = QtGui.QPainter()
@@ -35,23 +56,22 @@ class WaveWidget(QtGui.QWidget):
 
     painter.end()
 
-  def draw_wave(self,index,time):
-    print 'draw_wave1'
+  def draw_wave(self,index):
+    print 'draw_wave'
     self.index = index
-    #c:self.draw_frame()
     painter = QtGui.QPainter()
     painter.begin(self.offscreen)
     painter.setRenderHint(QtGui.QPainter.Antialiasing)
     painter.drawLine(0,self.height/2,self.width,self.height/2)
+    painter.setPen(QtCore.Qt.black)
     old_x = 0
     old_y = 0
     index = int(index)
-    
-    frames = int(self.source[index].nframes/self.width)
-    for i in range(self.width):
-      new_x = i
+    #frames = int(self.source[index].nframes/self.width)
+    for x in range(self.width):
+      new_x = x
       for j in range(self.width_size):
-        new_y = self.source[index].signal[i*frames+int(frames/self.width_size*j)]/2.0**15.0*self.height/2+self.height/2
+        new_y = self.source[index].signal[self.current_times*self.sample_rate/10.0+x*self.frames+int(self.frames/self.width_size*j)]/2.0**15.0*self.height/2+self.height/2
         painter.drawLine(old_x,int(old_y),new_x,int(new_y))
         old_y = new_y
       old_x = new_x
@@ -61,7 +81,7 @@ class WaveWidget(QtGui.QWidget):
 
 
   def reverse(self,x):
-    self.reverse_color = QtGui.QColor.fromCmykF(0.40,0.4,0.1,0.2)
+    self.reverse_color = QtGui.QColor.fromCmykF(0.30,0.2,0.2,0.3)
 
     painter = QtGui.QPainter()
     painter.begin(self.offscreen)
@@ -69,14 +89,14 @@ class WaveWidget(QtGui.QWidget):
     
     if self.start_pos < x:
       if x-self.oldpos_x > 0:
-        painter.fillRect(self.oldpos_x,0,x-self.oldpos_x,self.height,self.reverse_color)
+        painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.reverse_color)
       elif x-self.oldpos_x < 0:
-        painter.fillRect(self.oldpos_x,0,x-self.oldpos_x,self.height,self.back_ground_color)
+        painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.back_ground_color)
     elif self.start_pos > x:
       if x-self.oldpos_x < 0:
-        painter.fillRect(self.oldpos_x,0,x-self.oldpos_x,self.height,self.reverse_color)
+        painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.reverse_color)
       elif x-self.oldpos_x > 0:
-        painter.fillRect(self.oldpos_x,0,x-self.oldpos_x,self.height,self.back_ground_color)
+        painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.back_ground_color)
    
     painter.end()
     if self.wave_palette != 0 :
@@ -96,16 +116,38 @@ class WaveWidget(QtGui.QWidget):
       self.draw_wave(self.index)
     self.redraw()
 
+  def mouseReleaseEvent(self,event):
+    if self.start_pos == event.x():
+      self.time_bar.time = self.current_times*4410.0 + event.x()*self.sample_rate/10.0
+      self.timeBarPaint(event.x())
+
+  def timeBarPaint(self,x):
+    painter = QtGui.QPainter()
+    painter.begin(self.offscreen)
+    painter.setRenderHint(QtGui.QPainter.Antialiasing)
+    painter.setPen(QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+
+    painter.fillRect(x,2,2,self.height-4,QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+    for i in range(4):
+      painter.drawLine(x-3+i,2,x+1,10)
+      painter.drawLine(x+5-i,2,x+1,10)
+      painter.drawLine(x-3+i,self.height-2,x+1,self.height-12)
+      painter.drawLine(x+5-i,self.height-2,x+1,self.height-12)
+    painter.end()
+    self.update()
+
   def mouseMoveEvent(self,event):
     self.reverse(event.x())
 
-  """
-  def wheelEvent(self,event):
-    print 'Painter,wheelEvent'
-    print event.delta()
-    print event.orientation()
-    print '--'
-  """
+
+  def set_current_time(self,index):
+    self.current_times = index
+    print 'index--'
+    print index
+    self.draw_frame()
+    self.draw_wave(self.index)
+    self.update()
+
 
 
   def setup(self):
@@ -121,3 +163,6 @@ class WaveWidget(QtGui.QWidget):
     painter.drawPixmap(0,0,self.offscreen)
     painter.end()
   
+class CurrentTimeBar():
+  def __init__(self):
+    self.time = 0

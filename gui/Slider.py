@@ -33,17 +33,28 @@ class Slider(QtGui.QGroupBox):
     self.setCurrentIndex()
 
   def moveWheel(self,delta):
-    self.current = self.current - delta
+    delta = int(delta/3)
+    if self.current+delta > 0 and self.current+delta < self.maxRange :
+      self.current = self.current + delta
+    elif self.current+delta <= 0:
+      self.current = 0
+      print 'over'
+    elif self.current+delta >= self.maxRange:
+      self.current = self.maxRange
+      print 'under'
+
+    print self.current
     self.setCurrentIndex()
 
   def setMinimum(self,value):
     self.scrollBar.setMinimum(value)
 
   def setMaximum(self,value):
+    self.maxRange = value
     self.scrollBar.setMaximum(value)
   
   def setCurrentIndex(self):
-    print 'setCurrentIndex'
+    #print 'setCurrentIndex'
     self.scrollBar.setValue(self.current)
 
   def invertAppearance(self,invert):
