@@ -48,7 +48,7 @@ class WavePanel(QtGui.QGroupBox):
 
   def file_init(self,index):
     self.set_slider_range(index)
-    self.wave_widget.set_parameter(self.view_times)
+    self.wave_widget.set_parameter(self.view_times,index)
     self.wave_widget.init_current_times()
     self.wave_widget.draw_wave(index)
 
