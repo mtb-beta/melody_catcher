@@ -15,6 +15,7 @@ class WaveWidget(QtGui.QWidget):
     self.height = wave_height-20
     self.setup()
     self.source = []
+    self.wave_dict = {}
     self.wave_palette = 0
     self.sample_rate = 44100.0
     self.time_bar = CurrentTimeBar()
@@ -23,6 +24,7 @@ class WaveWidget(QtGui.QWidget):
     self.view_times = view_times
     self.width_size = view_times/2
     self.frames = self.view_times*self.sample_rate / self.width
+    self.wave_dict[5] = WavePalette(width_size)
   def init_current_times(self):
     self.current_times = 0
 
@@ -168,7 +170,7 @@ class CurrentTimeBar():
   def __init__(self):
     self.time = 0
 
-class WaveSignal():
-  def __init__(self,palette,size):
+class WavePalette():
+  def __init__(self,size):
     self.palette = palette
     self.size = size
