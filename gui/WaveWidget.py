@@ -41,7 +41,8 @@ class WaveWidget(QtGui.QWidget):
     self.draw_wave(self.index)
 
   def draw_frame(self):
-    self.back_ground_color = QtGui.QColor.fromCmykF(0.3,0.2,0.2,0.1)
+    #self.back_ground_color = QtGui.QColor.fromCmykF(0.3,0.2,0.2,0.1)
+    self.back_ground_color = QtCore.Qt.white
     self.offscreen.fill(self.back_ground_color)
 
     painter = QtGui.QPainter()
@@ -166,3 +167,8 @@ class WaveWidget(QtGui.QWidget):
 class CurrentTimeBar():
   def __init__(self):
     self.time = 0
+
+class WaveSignal():
+  def __init__(self,palette,size):
+    self.palette = palette
+    self.size = size

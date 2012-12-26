@@ -76,7 +76,7 @@ class ControlWidget(QtGui.QWidget):
     playbackLayout.addWidget(self.timeLcd)
 
     mainLayout = QtGui.QVBoxLayout()
-    mainLayout.addWidget(self.musicTable)
+    #mainLayout.addWidget(self.musicTable)
     #mainLayout.addLayout(seekerLayout)
     mainLayout.addLayout(playbackLayout)
 
