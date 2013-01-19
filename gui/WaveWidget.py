@@ -19,6 +19,7 @@ class WaveWidget(QtGui.QWidget):
         self.wave_palette = 0
         self.sample_rate = 44100.0
         self.time_bar = CurrentTimeBar()
+        self.move_swich = 0
 
     def setup(self):
         self.setFixedSize(self.width,self.height)
@@ -96,10 +97,8 @@ class WaveWidget(QtGui.QWidget):
             old_x = new_x
         painter.end()
         self.wave_dict[self.view_times].CopyPalette()
-        print 'draw_wave end'
 
     def draw_current_times(self):
-        print 'draw_current+times'
         painter = QtGui.QPainter()
         painter.begin(self.offscreen)
         self.screen = self.wave_dict[self.view_times].view_palette.copy(self.current_times,0,self.current_times+self.width,self.height)
@@ -113,12 +112,13 @@ class WaveWidget(QtGui.QWidget):
 
         self.reverse_color = QtGui.QColor.fromCmykF(0.30,0.2,0.2,0.1)
         self.draw_frame()
+        self.wave_dict[self.view_times].CopyPalette()
         painter = QtGui.QPainter()
-        painter.begin(self.offscreen)
+        painter.begin(self.wave_dict[self.view_times].view_palette)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.fillRect(self.start_pos,2,self.end_pos-self.start_pos,self.height-4,self.reverse_color)
+        painter.fillRect(self.current_times+self.start_pos,2,self.end_pos+self.current_times-self.start_pos,self.height-4,self.reverse_color)
+        painter.drawPixmap(0,0,self.wave_dict[self.view_times].palette)
         painter.end()
-
 
         if self.wave_dict.has_key(self.view_times):
             self.draw_current_times()
@@ -139,6 +139,7 @@ class WaveWidget(QtGui.QWidget):
     def mouseReleaseEvent(self,event):
         if self.start_pos == event.x():
             self.time_bar.time = self.current_times*4410.0 + event.x()*self.sample_rate/10.0
+            #self.wave_dict[self.view_times].CopyPalette()
             self.timeBarPaint(event.x())
 
     def timeBarPaint(self,x):
@@ -156,6 +157,7 @@ class WaveWidget(QtGui.QWidget):
         self.update()
 
     def mouseMoveEvent(self,event):
+        self.move_swich = 1
         self.reverse(event.x())
 
 
@@ -197,6 +199,9 @@ class WavePalette():
             painter.drawLine(0,self.height-i,self.width,self.height-i)
             painter.drawLine(0,i,self.width,i)
         painter.end()
+
+    def ClearPalette(self):
+        self.view_palette = QtGui.QPixmap(self.width,self.height)
 
     def CopyPalette(self):
         self.view_palette = self.palette.copy(0,0,self.width,self.height)
