@@ -109,33 +109,21 @@ class WaveWidget(QtGui.QWidget):
 
 
     def reverse(self,x):
+        self.end_pos = x
+
         self.reverse_color = QtGui.QColor.fromCmykF(0.30,0.2,0.2,0.1)
         self.draw_frame()
         painter = QtGui.QPainter()
         painter.begin(self.offscreen)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        
-        if self.start_pos < x:
-            if x-self.oldpos_x > 0:
-                painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.reverse_color)
-            elif x-self.oldpos_x < 0:
-                painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.back_ground_color)
-        elif self.start_pos > x:
-            if x-self.oldpos_x < 0:
-                painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.reverse_color)
-            elif x-self.oldpos_x > 0:
-                painter.fillRect(self.oldpos_x,2,x-self.oldpos_x,self.height-4,self.back_ground_color)
-
-
-
+        painter.fillRect(self.start_pos,2,self.end_pos-self.start_pos,self.height-4,self.reverse_color)
         painter.end()
-        
+
+
         if self.wave_dict.has_key(self.view_times):
             self.draw_current_times()
         
         self.redraw()
-
-        self.oldpos_x = x
 
     def redraw(self):
         self.update()
@@ -151,7 +139,7 @@ class WaveWidget(QtGui.QWidget):
     def mouseReleaseEvent(self,event):
         if self.start_pos == event.x():
             self.time_bar.time = self.current_times*4410.0 + event.x()*self.sample_rate/10.0
-        self.timeBarPaint(event.x())
+            self.timeBarPaint(event.x())
 
     def timeBarPaint(self,x):
         painter = QtGui.QPainter()
