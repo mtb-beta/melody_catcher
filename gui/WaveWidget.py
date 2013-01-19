@@ -116,10 +116,19 @@ class WaveWidget(QtGui.QWidget):
         painter = QtGui.QPainter()
         painter.begin(self.wave_dict[self.view_times].view_palette)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.fillRect(self.current_times+self.start_pos,2,self.end_pos+self.current_times-self.start_pos,self.height-4,self.reverse_color)
+        tip =self.current_times+self.start_pos
+        end =self.end_pos-self.start_pos 
+        painter.fillRect(tip,2,end,self.height-4,self.reverse_color)
         painter.drawPixmap(0,0,self.wave_dict[self.view_times].palette)
         painter.end()
 
+        print "-----"
+        print 'tip:',self.current_times+self.start_pos
+        print 'end:',self.end_pos+self.current_times-self.start_pos
+        print 'current_times:',self.current_times
+        print 'start_pos:',self.start_pos
+        print 'end_pos:',self.end_pos
+        
         if self.wave_dict.has_key(self.view_times):
             self.draw_current_times()
         
@@ -163,7 +172,9 @@ class WaveWidget(QtGui.QWidget):
 
     def set_current_time(self,index):
         print 'set_current_time'
-
+        range = ( self.source[self.index].nframes / ( ( self.view_times * 44100.0 ) / self.width - 10 ))
+        shift = self.wave_dict[self.view_times].width / range
+        self.wave_dict[self.view_times].SetShift(shift)
         self.current_times = index
         self.draw_frame()
         self.draw_current_times()
@@ -205,3 +216,5 @@ class WavePalette():
 
     def CopyPalette(self):
         self.view_palette = self.palette.copy(0,0,self.width,self.height)
+    def SetShift(self,shift):
+        self.shift = shift
