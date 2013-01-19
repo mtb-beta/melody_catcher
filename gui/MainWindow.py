@@ -25,8 +25,8 @@ class MainWindow(QtGui.QMainWindow):
     self.wave_height = display_height - self.control_height -480
     self.midi_width = display_width
     self.midi_height= 480 
-
     self.setup()
+
   def setup(self):
     self.control_panel  = ControlPanel('Control',self.control_width,self.control_height)
     #self.control_widget  = ControlWidget(self.control_width,self.control_height)
