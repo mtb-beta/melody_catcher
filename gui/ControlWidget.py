@@ -37,6 +37,7 @@ class ControlWidget(QtGui.QWidget):
     bar.addAction(self.main_window.playAction)
     bar.addAction(self.main_window.pauseAction)
     bar.addAction(self.main_window.stopAction)
+    bar.addAction(self.main_window.analyzeAction)
 
     self.seekSlider = Phonon.SeekSlider(self)
     self.seekSlider.setMediaObject(self.mediaObject)
@@ -47,6 +48,7 @@ class ControlWidget(QtGui.QWidget):
 
     volumeLabel = QtGui.QLabel()
     volumeLabel.setPixmap(QtGui.QPixmap('images/volume.png'))
+
 
     palette = QtGui.QPalette()
     palette.setBrush(QtGui.QPalette.Light,QtCore.Qt.darkGray)
@@ -104,10 +106,10 @@ class ControlWidget(QtGui.QWidget):
 
     self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory,self)
     self.mediaObject = Phonon.MediaObject(self)
-    self.metaInformationResolver =Phonon.MediaObject(self)
-    self.mediaObject.setTickInterval(1000)
+    self.metaInformationResolver = Phonon.MediaObject(self)
+    self.mediaObject.setTickInterval(10)
 
-    self.mediaObject.tick.connect(self.tick)#
+    self.mediaObject.tick.connect(self.tick)
     self.mediaObject.stateChanged.connect(self.stateChange)
     self.metaInformationResolver.stateChanged.connect(self.metaStateChanged)
     self.mediaObject.currentSourceChanged.connect(self.sourceChanged)
@@ -203,8 +205,10 @@ class ControlWidget(QtGui.QWidget):
     """
     tickが更新された際に動作する関数
     """
+    self.wave_widget.setBarTime(time)
     displayTime  = QtCore.QTime(0,(time/60000) % 60,(time /1000) % 60 )
     self.timeLcd.display(displayTime.toString('mm:ss'))
+
 
   def stateChange(self,newState,oldState):
     """

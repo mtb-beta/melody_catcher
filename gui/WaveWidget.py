@@ -18,8 +18,12 @@ class WaveWidget(QtGui.QWidget):
         self.wave_dict = {}
         self.wave_palette = 0
         self.sample_rate = 44100.0
-        self.time_bar = CurrentTimeBar()
+        self.time_bar = CurrentTimeBar(self.sample_rate)
         self.range = SelectRange()
+        self.start_pos=1
+        self.end_pos = 0
+        self.tip = 0
+        self.end = 0
 
     def setup(self):
         self.setFixedSize(self.width,self.height)
@@ -40,6 +44,7 @@ class WaveWidget(QtGui.QWidget):
         #print 'frames:',self.frames
         #print 'palette_width:',self.palette_width
         self.slider.setMaximum(self.palette_width-self.width)
+        self.time_bar.setParameter(self.palette_width,self.source[self.index].nframes/self.sample_rate*1000)
 
     def init_current_times(self):
         self.current_times = 0
@@ -75,7 +80,7 @@ class WaveWidget(QtGui.QWidget):
         painter.end()
 
     def draw_wave(self,index):
-        print 'draw_wave'
+        #print 'draw_wave'
         self.index = index
         painter = QtGui.QPainter()
         objectPalette =self.wave_dict[self.view_times]
@@ -107,17 +112,15 @@ class WaveWidget(QtGui.QWidget):
         self.update()
 
 
-    def reverse(self,x):
-        self.end_pos = x
+    def reverse(self):
 
         self.reverse_color = QtGui.QColor.fromCmykF(0.30,0.2,0.2,0.1)
-        self.draw_frame()
-        self.wave_dict[self.view_times].CopyPalette()
+        #self.draw_frame()
+        #self.wave_dict[self.view_times].CopyPalette()
+        #self.draw_timeBar()
         painter = QtGui.QPainter()
         painter.begin(self.wave_dict[self.view_times].view_palette)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        self.tip =self.current_times+self.start_pos
-        self.end =self.end_pos-self.start_pos 
         painter.fillRect(self.tip,2,self.end,self.height-4,self.reverse_color)
         painter.drawPixmap(0,0,self.wave_dict[self.view_times].palette)
         painter.end()
@@ -151,7 +154,29 @@ class WaveWidget(QtGui.QWidget):
             #self.wave_dict[self.view_times].CopyPalette()
             self.timeBarPaint(event.x())
 
-        self.range.setRange(self.tip * self.frames , self.end * self.frames)
+        self.range.setRange(int (self.tip * self.frames) ,int( self.end * self.frames ) )
+
+    def draw_timeBar(self):
+        x = self.time_bar.time
+        self.draw_frame()
+        self.wave_dict[self.view_times].CopyPalette()
+        self.reverse()
+        painter = QtGui.QPainter()
+        painter.begin(self.wave_dict[self.view_times].view_palette) 
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setPen(QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+        painter.fillRect(x,2,2,self.height-4,QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+        for i in range(4):
+            painter.drawLine(x-3+i,2,x+1,10)
+        painter.drawLine(x+5-i,2,x+1,10)
+        painter.drawLine(x-3+i,self.height-2,x+1,self.height-12)
+        painter.drawLine(x+5-i,self.height-2,x+1,self.height-12)
+        painter.end()
+        if self.wave_dict.has_key(self.view_times):
+            self.draw_current_times()
+        
+        self.redraw()
+
 
     def timeBarPaint(self,x):
         painter = QtGui.QPainter()
@@ -168,12 +193,14 @@ class WaveWidget(QtGui.QWidget):
         self.update()
 
     def mouseMoveEvent(self,event):
-        self.move_swich = 1
-        self.reverse(event.x())
-
+        self.move_swich = 1 
+        self.end_pos = event.x()
+        #self.reverse(event.x())
+        self.tip =self.current_times+self.start_pos
+        self.end =self.end_pos-self.start_pos 
 
     def set_current_time(self,index):
-        print 'set_current_time'
+        #print 'set_current_time'
         range = ( self.source[self.index].nframes / ( ( self.view_times * 44100.0 ) / self.width - 10 ))
         shift = self.wave_dict[self.view_times].width / range
         self.wave_dict[self.view_times].SetShift(shift)
@@ -182,6 +209,9 @@ class WaveWidget(QtGui.QWidget):
         self.draw_current_times()
         self.update()
 
+    def setBarTime(self,time):
+        self.time_bar.set_time(time)
+        self.draw_timeBar()
 
     def paintEvent(self,paint_event):
         painter = QtGui.QPainter()
@@ -190,26 +220,42 @@ class WaveWidget(QtGui.QWidget):
         painter.end()
 
 class CurrentTimeBar():
-    def __init__(self):
+    def __init__(self,sample_rate):
         self.time = 0
+        self.sample_rate = sample_rate
+        self.width = 1
+        self.time_sum = 1
+    def set_time(self,time):
+        #print self.time_sum
+        #print self.width
+        #print time
+        time_tmp =int(time * self.width / self.time_sum)
+        #print 'time:',time_tmp
+        self.time = time_tmp
+    def setParameter(self,width,time_sum):
+        self.width = width
+        self.time_sum = time_sum
 
 class SelectRange():
     def __init__(self):
         self.start = 0
         self.end = 0
 
-    def setRange(self,start,end):
-        self.start = int( start )
-        self.end = int( start  + end)
-        print 'range'
-        print 'start:',self.start
-        print 'end:',self.end
+    def setRange(self,start,length):
+        self.start = start
+        self.length =  length
+        #print 'range'
+        #print 'start:',self.start
+        #print 'end:',self.end
 
     def setStart(self,start):
         self.start = start
 
-    def sefEnd(self,end):
-        self.end = end 
+    def sefEnd(self,length):
+        self.length = length
+
+    def getRange(self):
+        return self.start,self.length
 
 class WavePalette():
     def __init__(self,size,width,height,frames):
