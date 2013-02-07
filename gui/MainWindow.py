@@ -8,6 +8,7 @@ Note:メインウィンドウを制御するクラス
 """
 from PyQt4 import QtCore,QtGui
 from wav.MusicObject import*
+import wav.readxml as xml
 from gui.MidiViewWidget import*
 from gui.WavePanel import*
 from gui.ControlPanel import*
@@ -123,6 +124,12 @@ class MainWindow(QtGui.QMainWindow):
         comand = 'java jp.crestmuse.cmx.amusaj.commands.WAV2FPD -conf sample_data/config.xml sample_data/tmp.wav -o output.xml'
         print comand
         os.system(comand)
+        pitch,dim,frames,meta = xml.readxml('output.xml')
+
+        print pitch
+        print dim
+        print frames
+        print meta 
         
 
     def about(self):
