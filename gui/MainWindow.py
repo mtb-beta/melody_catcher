@@ -126,11 +126,10 @@ class MainWindow(QtGui.QMainWindow):
         os.system(comand)
         pitch,dim,frames,meta = xml.readxml('output.xml')
 
-        print pitch
-        print dim
-        print frames
-        print meta 
-        
+        #print pitch #ピッチデータの行列が格納されている
+        #print dim
+        #print frames
+        #print meta 
 
     def about(self):
         QtGui.QMessageBox.information(self,"About Melody Catcher",
