@@ -115,14 +115,14 @@ class MainWindow(QtGui.QMainWindow):
     def analize(self):
         print 'analize'
         start, end = self.wave_panel.wave_widget.range.getRange()
-        print start,':',end
+        #print start,':',end
         file = str(self.control_panel.control_widget.metaInformationResolver.currentSource().fileName())
         Path,filename = os.path.split(file)
         outfile = '%s/tmp_%s'%(Path,filename)
         
         self.wave_panel.wave_widget.source[0].Cutout(start,end)
         comand = 'java jp.crestmuse.cmx.amusaj.commands.WAV2FPD -conf sample_data/config.xml sample_data/tmp.wav -o output.xml'
-        print comand
+        #print comand
         os.system(comand)
         pitch,dim,frames,meta = xml.readxml('output.xml')
 
@@ -130,6 +130,9 @@ class MainWindow(QtGui.QMainWindow):
         #print dim
         #print frames
         #print meta 
+
+        # MIDIパレットを作成させる
+        self.wave_panel.wave_widget.createMidiPalette(self.midi_view_widget)
 
     def about(self):
         QtGui.QMessageBox.information(self,"About Melody Catcher",

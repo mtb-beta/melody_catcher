@@ -34,6 +34,9 @@ class WaveWidget(QtGui.QWidget):
     def set_slider(self,slider):
         self.slider = slider
 
+    def createMidiPalette(self,midi):
+        midi.createPalette(self.view_times,self.palette_width,self.frames)
+
     def set_parameter(self,view_times,index):
         self.index = index
         self.view_times = view_times
