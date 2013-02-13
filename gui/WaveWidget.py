@@ -24,6 +24,7 @@ class WaveWidget(QtGui.QWidget):
         self.end_pos = 0
         self.tip = 0
         self.end = 0
+        self.view_times = 0
 
     def setup(self):
         self.setFixedSize(self.width,self.height)
@@ -82,6 +83,10 @@ class WaveWidget(QtGui.QWidget):
             painter.drawLine(0,i,self.width,i)
         painter.end()
 
+    def setObject(self,midi_view_widget):
+        self.midi_view_widget = midi_view_widget
+
+
     def draw_wave(self,index):
         #print 'draw_wave'
         self.index = index
@@ -121,19 +126,20 @@ class WaveWidget(QtGui.QWidget):
         #self.draw_frame()
         #self.wave_dict[self.view_times].CopyPalette()
         #self.draw_timeBar()
-        painter = QtGui.QPainter()
-        painter.begin(self.wave_dict[self.view_times].view_palette)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.fillRect(self.tip,2,self.end,self.height-4,self.reverse_color)
-        painter.drawPixmap(0,0,self.wave_dict[self.view_times].palette)
-        painter.end()
+        if self.wave_dict.has_key(self.view_times):
+            painter = QtGui.QPainter()
+            painter.begin(self.wave_dict[self.view_times].view_palette)
+            painter.setRenderHint(QtGui.QPainter.Antialiasing)
+            painter.fillRect(self.tip,2,self.end,self.height-4,self.reverse_color)
+            painter.drawPixmap(0,0,self.wave_dict[self.view_times].palette)
+            painter.end()
 
-        #print "-----"
-        #print 'tip:',self.current_times+self.start_pos
-        #print 'end:',self.end_pos+self.current_times-self.start_pos
-        #print 'current_times:',self.current_times
-        #print 'start_pos:',self.start_pos
-        #print 'end_pos:',self.end_pos
+            #print "-----"
+            #print 'tip:',self.current_times+self.start_pos
+            #print 'end:',self.end_pos+self.current_times-self.start_pos
+            #print 'current_times:',self.current_times
+            #print 'start_pos:',self.start_pos
+            #print 'end_pos:',self.end_pos
         
         if self.wave_dict.has_key(self.view_times):
             self.draw_current_times()
@@ -162,23 +168,24 @@ class WaveWidget(QtGui.QWidget):
     def draw_timeBar(self):
         x = self.time_bar.time
         self.draw_frame()
-        self.wave_dict[self.view_times].CopyPalette()
-        self.reverse()
-        painter = QtGui.QPainter()
-        painter.begin(self.wave_dict[self.view_times].view_palette) 
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.setPen(QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
-        painter.fillRect(x,2,2,self.height-4,QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
-        for i in range(4):
-            painter.drawLine(x-3+i,2,x+1,10)
-        painter.drawLine(x+5-i,2,x+1,10)
-        painter.drawLine(x-3+i,self.height-2,x+1,self.height-12)
-        painter.drawLine(x+5-i,self.height-2,x+1,self.height-12)
-        painter.end()
         if self.wave_dict.has_key(self.view_times):
-            self.draw_current_times()
-        
-        self.redraw()
+            self.wave_dict[self.view_times].CopyPalette()
+            self.reverse()
+            painter = QtGui.QPainter()
+            painter.begin(self.wave_dict[self.view_times].view_palette) 
+            painter.setRenderHint(QtGui.QPainter.Antialiasing)
+            painter.setPen(QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+            painter.fillRect(x,2,2,self.height-4,QtGui.QColor.fromCmykF(1,0.1,1.0,0.6))
+            for i in range(4):
+                painter.drawLine(x-3+i,2,x+1,10)
+            painter.drawLine(x+5-i,2,x+1,10)
+            painter.drawLine(x-3+i,self.height-2,x+1,self.height-12)
+            painter.drawLine(x+5-i,self.height-2,x+1,self.height-12)
+            painter.end()
+            if self.wave_dict.has_key(self.view_times):
+                self.draw_current_times()
+            
+            self.redraw()
 
 
     def timeBarPaint(self,x):

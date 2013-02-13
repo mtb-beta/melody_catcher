@@ -36,6 +36,11 @@ class MainWindow(QtGui.QMainWindow):
         self.midi_view_widget = MidiViewWidget(self.midi_width,self.midi_height)
         self.control_panel.control_widget.set_wave_panel(self.wave_panel)
 
+        # オブジェクトの設置
+        self.control_panel.setObject(self.wave_panel,self.midi_view_widget,self)
+        self.midi_view_widget.setObject(self.wave_panel,self.control_panel,self)
+        self.wave_panel.setObject(self.midi_view_widget,self.control_panel,self)
+
         # 縦に並ぶレイアウト
         self.MainLayout = QtGui.QVBoxLayout()
 

@@ -19,6 +19,11 @@ class WavePanel(QtGui.QGroupBox):
         self.set_ui(width,height)
         self.view_times = 10 # 画面上には波形として表示される時間の長さ
 
+    def setObject(self,midi_view_widget,control_panel,main_panel):
+        self.midi_view_widget = midi_view_widget
+        self.control_panel = control_panel
+        self.main_panel = main_panel
+
     def set_ui(self,width,height):
         self.wave_widget = WaveWidget(width-10,height-50)
         self.slider = self.initSlider()

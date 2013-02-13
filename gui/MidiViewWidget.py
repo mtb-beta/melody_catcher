@@ -20,6 +20,11 @@ class MidiViewWidget(QtGui.QWidget):
         self.setup()
         self.midi_dict = {}
 
+    def setObject(self,wave_panel,control_panel,main_panel):
+        self.wave_panel = wave_panel
+        self.control_panel = control_panel
+        self.main_panel = main_panel
+
     def createPalette(self,view_times,palette_width,frames):
         self.midi_dict[view_times]=MidiPalette(self.width_size,palette_width,self.height,frames)
         print 'createPalette'
