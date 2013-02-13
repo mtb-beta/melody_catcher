@@ -207,7 +207,12 @@ class WaveWidget(QtGui.QWidget):
         self.end_pos = event.x()
         #self.reverse(event.x())
         self.tip =self.current_times+self.start_pos
-        self.end =self.end_pos-self.start_pos 
+        self.end =self.end_pos-self.start_pos
+
+    def setObject(self,midi_view_widget,control_panel,main_panel):
+        self.midi_view_widget = midi_view_widget
+        self.main_panel = main_panel
+        self.control_panel = control_panel
 
     def set_current_time(self,index):
         #print 'set_current_time'
@@ -218,6 +223,8 @@ class WaveWidget(QtGui.QWidget):
         self.draw_frame()
         self.draw_current_times()
         self.update()
+
+        self.midi_view_widget.set_current_time(index,shift)
 
     def setBarTime(self,time):
         self.time_bar.set_time(time)

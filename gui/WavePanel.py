@@ -23,6 +23,7 @@ class WavePanel(QtGui.QGroupBox):
         self.midi_view_widget = midi_view_widget
         self.control_panel = control_panel
         self.main_panel = main_panel
+        self.wave_widget.setObject(self.midi_view_widget,self.control_panel,self.main_panel)
 
     def set_ui(self,width,height):
         self.wave_widget = WaveWidget(width-10,height-50)

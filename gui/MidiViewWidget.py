@@ -19,6 +19,7 @@ class MidiViewWidget(QtGui.QWidget):
         self.current_time = 0
         self.setup()
         self.midi_dict = {}
+        self.view_times = 0
 
     def setObject(self,wave_panel,control_panel,main_panel):
         self.wave_panel = wave_panel
@@ -26,8 +27,19 @@ class MidiViewWidget(QtGui.QWidget):
         self.main_panel = main_panel
 
     def createPalette(self,view_times,palette_width,frames):
+        self.view_times = view_times
         self.midi_dict[view_times]=MidiPalette(self.width_size,palette_width,self.height,frames)
         print 'createPalette'
+
+    def set_current_time(self,index,shift):
+        if self.midi_dict.has_key(self.view_times):
+            self.midi_dict[self.view_times].SetShift(shift)
+        self.current_times = index
+        print 'midi current',index
+        # self.draw_frame()
+        # self.draw_current_times()
+        # self.update()
+        # TODO
 
     def draw_piano(self):
         painter = QtGui.QPainter()
@@ -168,3 +180,9 @@ class MidiPalette():
             painter.drawLine(0,self.height-i,self.width,self.height-i)
             painter.drawLine(0,i,self.width,i)
         painter.end()
+
+    def SetShift(self,shift):
+        self.shift = shift
+
+
+
